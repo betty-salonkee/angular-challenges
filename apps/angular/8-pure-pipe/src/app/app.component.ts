@@ -1,18 +1,15 @@
 import { Component } from '@angular/core';
+import { formatNamePipe } from './format-name.pipe';
 
 @Component({
   selector: 'app-root',
+  imports: [formatNamePipe],
   template: `
     @for (person of persons; track person) {
-      {{ heavyComputation(person, $index) }}
+      {{ person | formatName: $index }}
     }
   `,
 })
 export class AppComponent {
   persons = ['toto', 'jack'];
-
-  heavyComputation(name: string, index: number) {
-    // very heavy computation
-    return `${name} - ${index}`;
-  }
 }
