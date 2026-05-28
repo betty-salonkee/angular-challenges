@@ -1,4 +1,5 @@
-import { Component, HostListener, signal } from '@angular/core';
+import { Component, inject, NgZone, signal } from '@angular/core';
+import { fromEvent, map, tap } from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -33,11 +34,19 @@ export class AppComponent {
   title = 'scroll-cd';
 
   public displayButton = signal(false);
+  private readonly ngZone = inject(NgZone);
 
-  @HostListener('window:scroll')
-  onScroll() {
-    const pos = window.scrollY;
-    this.displayButton.set(pos > 50);
+  constructor() {
+    this.ngZone.runOutsideAngular(() => {
+      fromEvent(window, 'scroll')
+        .pipe(
+          map(() => window.scrollY),
+          tap((position) => {
+            this.displayButton.set(position > 50);
+          }),
+        )
+        .subscribe();
+    });
   }
 
   goToTop() {
