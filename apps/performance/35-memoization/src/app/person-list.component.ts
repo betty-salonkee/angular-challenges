@@ -6,14 +6,8 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
+import { fibonacciPipe } from './fibonacci.pipe';
 import { Person } from './person.model';
-
-const fibonacci = (num: number): number => {
-  if (num === 1 || num === 2) {
-    return 1;
-  }
-  return fibonacci(num - 1) + fibonacci(num - 2);
-};
 
 @Component({
   selector: 'app-person-list',
@@ -24,6 +18,7 @@ const fibonacci = (num: number): number => {
     MatInputModule,
     MatChipsModule,
     TitleCasePipe,
+    fibonacciPipe,
   ],
   template: `
     <h1 class="text-center font-semibold" title="Title">
@@ -39,11 +34,11 @@ const fibonacci = (num: number): number => {
     </mat-form-field>
 
     <mat-list class="flex w-full">
-      @for (person of persons(); track person.name) {
+      @for (person of persons(); track person.fib) {
         <mat-list-item>
           <div class="flex justify-between">
             <h3>{{ person.name }}</h3>
-            <mat-chip>{{ calculate(person.fib) }}</mat-chip>
+            <mat-chip>{{ person.fib | fibonacci }}</mat-chip>
           </div>
         </mat-list-item>
       }
@@ -58,8 +53,4 @@ export class PersonListComponent {
   title = input('');
 
   label = '';
-
-  calculate(num: number) {
-    return fibonacci(num);
-  }
 }
