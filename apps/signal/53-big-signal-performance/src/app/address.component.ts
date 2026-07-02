@@ -7,9 +7,9 @@ import { UserStore } from './user.service';
   template: `
     <div cd-flash class="m-4 block border border-gray-500 p-4">
       Address:
-      <div>Street: {{ userService.user().address.street }}</div>
-      <div>ZipCode: {{ userService.user().address.zipCode }}</div>
-      <div>City: {{ userService.user().address.city }}</div>
+      <div>Street: {{ userAddress().street }}</div>
+      <div>ZipCode: {{ userAddress().zipCode }}</div>
+      <div>City: {{ userAddress().city }}</div>
     </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -17,4 +17,5 @@ import { UserStore } from './user.service';
 })
 export class AddressComponent {
   userService = inject(UserStore);
+  protected readonly userAddress = this.userService.userAddress;
 }

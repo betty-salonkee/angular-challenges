@@ -64,36 +64,47 @@ export class UserFormComponent {
   userStore = inject(UserStore);
 
   form = new FormGroup({
-    name: new FormControl(this.userStore.user().name, { nonNullable: true }),
-    street: new FormControl(this.userStore.user().address.street, {
+    name: new FormControl(this.userStore.userName(), { nonNullable: true }),
+    street: new FormControl(this.userStore.userAddress().street, {
       nonNullable: true,
     }),
-    zipCode: new FormControl(this.userStore.user().address.zipCode, {
+    zipCode: new FormControl(this.userStore.userAddress().zipCode, {
       nonNullable: true,
     }),
-    city: new FormControl(this.userStore.user().address.city, {
+    city: new FormControl(this.userStore.userAddress().city, {
       nonNullable: true,
     }),
-    note: new FormControl(this.userStore.user().note, { nonNullable: true }),
-    title: new FormControl(this.userStore.user().title, { nonNullable: true }),
-    salary: new FormControl(this.userStore.user().salary, {
+    note: new FormControl(this.userStore.userNote(), { nonNullable: true }),
+    title: new FormControl(this.userStore.userJobInfo().title, {
+      nonNullable: true,
+    }),
+    salary: new FormControl(this.userStore.userJobInfo().salary, {
       nonNullable: true,
     }),
   });
 
-  submit() {
-    this.userStore.user.update((u) => ({
-      ...u,
-      name: this.form.getRawValue().name,
-      address: {
-        ...u.address,
-        street: this.form.getRawValue().street,
-        zipCode: this.form.getRawValue().zipCode,
-        city: this.form.getRawValue().city,
-      },
-      note: this.form.getRawValue().note,
-      title: this.form.getRawValue().title,
-      salary: this.form.getRawValue().salary,
-    }));
+  protected readonly formControls = this.form.controls;
+
+  submit(): void {
+    const formRawValue = this.form.getRawValue();
+    this.userStore.userName.set(formRawValue.name);
+
+    if (
+      this.formControls.street.touched ||
+      this.formControls.zipCode.touched ||
+      this.formControls.city.touched
+    ) {
+      this.userStore.setUserAddress(
+        formRawValue.street,
+        formRawValue.zipCode,
+        formRawValue.city,
+      );
+    }
+
+    if (this.formControls.title.touched || this.formControls.salary.touched) {
+      this.userStore.setUserJobInfo(formRawValue.title, formRawValue.salary);
+    }
+
+    this.userStore.userNote.set(formRawValue.note);
   }
 }
